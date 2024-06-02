@@ -9,16 +9,13 @@ import Navigator from "./Navigator"; // Asegúrate de tener este componente corr
 import TimeToLeaveIcon from "@mui/icons-material/TimeToLeave";
 import PetsIcon from "@mui/icons-material/Pets";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import PanoramaIcon from "@mui/icons-material/Panorama";
-import FastfoodIcon from "@mui/icons-material/Fastfood";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import ContainerModel from "./3d/components/ContainerModel"; // Asegúrate de tener este componente correctamente implementado
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Drawer from "@mui/material/Drawer";
-import { Button, Container, Stack } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import VerticalSlider from "./3d/components/VerticalSlider";
-import SimpleBackdrop from "./Loader";
 
 const theme = createTheme({
 	palette: {
@@ -80,7 +77,6 @@ const categories = [
 				id: "Autos",
 				icon: <TimeToLeaveIcon sx={{ color: "white" }} />,
 			},
-
 			{
 				id: "Personas",
 				icon: <EmojiPeopleIcon sx={{ color: "white" }} />,
@@ -92,6 +88,7 @@ const categories = [
 export default function Paperbase() {
 	const [idCategorieSelected, setIdCategorieSelected] = React.useState("Personas");
 	const [selectedModelo, setSelectedModelo] = React.useState(null);
+	const [showMessage, setShowMessage] = React.useState(true);
 
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
@@ -104,6 +101,15 @@ export default function Paperbase() {
 		setSelectedModelo({ id: 12, categoria: "Personas", model: "/models/persona2.glb", image: "/avatars/persona2.PNG" });
 		setIdCategorieSelected("Personas");
 	}, []);
+
+	React.useEffect(() => {
+		setShowMessage(true);
+		const timer = setTimeout(() => {
+			setShowMessage(false);
+		}, 5000);
+
+		return () => clearTimeout(timer); // Limpiar el timer si el componente se desmonta o `selectedModelo` cambia
+	}, [selectedModelo]);
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -146,6 +152,11 @@ export default function Paperbase() {
 						backgroundColor: (theme) => (theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900]),
 					}}
 				>
+					{showMessage && (
+						<Box sx={{ position: "absolute", top: 0, left: 0, right: 0, p: 2, backgroundColor: "rgba(0,0,0,0.5)", color: "white", textAlign: "center", zIndex: 1200 }}>
+							<Typography variant='h6'>Por favor, espere unos segundos...</Typography>
+						</Box>
+					)}
 					<Container sx={{ flexGrow: 1, overflow: "auto", mr: { xs: 0, sm: -12 } }}>
 						<ContainerModel selectedModelo={selectedModelo} />
 					</Container>
